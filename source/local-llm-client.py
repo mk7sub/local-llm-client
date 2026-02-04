@@ -18,7 +18,10 @@ class LocalLLMClient:
     with open(self.log_file, 'r', encoding='utf-8') as f:
       self.log_content = f.read()
 
-  def analyze_log(self):
+  def main(self):
+    # ログファイルをインポート
+    self.import_log()
+    
     # Ollama APIに送信するペイロードを作成
     # ログが巨大な場合は、末尾の数百行に絞るなどの処理を推奨
     payload = {
@@ -41,6 +44,5 @@ class LocalLLMClient:
 
 if __name__ == "__main__":
   client = LocalLLMClient(MODEL, API_URL, LOG_FILE, PROMPT)
-  client.import_log()
-  response = client.analyze_log()
+  response = client.main()
   print("解析結果:", response)
