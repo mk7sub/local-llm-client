@@ -1,32 +1,18 @@
 import requests
 
-MODEL = "gpt-oss:20b"
-API_URL = "http://localhost:11434/api/generate"
-LOG_FILE = "./log/app.log"
-PROMPT = "以下のログファイルを解析し、何が起きたか要約してください"
-
 class LocalLLMClient:
-  def __init__(self, model, api_url, log_file, prompt):
+  def __init__(self, model, api_url, prompt):
     self.model = model
     self.api_url = api_url
-    self.log_file = log_file
     self.prompt = prompt
     self.log_content = ""
 
-  def import_log(self):
-    # ログファイルを読み込む
-    with open(self.log_file, 'r', encoding='utf-8') as f:
-      self.log_content = f.read()
-
-  def main(self):
-    # ログファイルをインポート
-    self.import_log()
-    
+  def main(self):    
     # Ollama APIに送信するペイロードを作成
     # ログが巨大な場合は、末尾の数百行に絞るなどの処理を推奨
     payload = {
       "model": self.model,
-      "prompt": f"{self.prompt}:\n\n{self.log_content}",
+      "prompt": self.prompt,
       "stream": False
     }
 
@@ -43,6 +29,17 @@ class LocalLLMClient:
       print(f"エラーが発生しました: {e}")
 
 if __name__ == "__main__":
-  client = LocalLLMClient(MODEL, API_URL, LOG_FILE, PROMPT)
+
+  log_content = ""
+  with open("./log/app.log", 'r', encoding='utf-8') as f:
+    log_content = f.read()
+  
+  prompt = "以下のログファイルを解析し、何が起きたか要約してください" + "\n\n" + log_content
+
+  client = LocalLLMClient(
+      "gpt-oss:20b",
+      "http://localhost:11434/api/generate",
+      prompt
+    )
   response = client.main()
   print("解析結果:", response)
