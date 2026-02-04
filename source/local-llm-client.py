@@ -1,10 +1,5 @@
 import requests
 
-MODEL = "gpt-oss:20b"
-API_URL = "http://localhost:11434/api/generate"
-LOG_FILE = "./log/app.log"
-PROMPT = "以下のログファイルを解析し、何が起きたか要約してください"
-
 class LocalLLMClient:
   def __init__(self, model, api_url, log_file, prompt):
     self.model = model
@@ -43,6 +38,14 @@ class LocalLLMClient:
       print(f"エラーが発生しました: {e}")
 
 if __name__ == "__main__":
-  client = LocalLLMClient(MODEL, API_URL, LOG_FILE, PROMPT)
+  # 動作確認用のコード
+  # クライアントの初期化
+  client = LocalLLMClient(
+      "gpt-oss:20b", 
+      "http://localhost:11434/api/generate", 
+      "./log/app.log", 
+      "以下のログファイルを解析し、何が起きたか要約してください"
+    )
+  # メイン処理の実行
   response = client.main()
   print("解析結果:", response)
